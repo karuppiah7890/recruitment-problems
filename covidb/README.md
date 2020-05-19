@@ -35,3 +35,8 @@ Extensions
 
 The name of project `covidb` has been derived by combining the words `COVID` and
 `DB` (Database), since we are building a database of positively tested people.
+
+---
+
+Honestly, after trying out the program, it feels a bit boring. Mostly getting
+and showing input. Not much to think about actually. Hmm. 
