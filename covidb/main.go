@@ -2,7 +2,9 @@ package main
 
 import (
 	"bufio"
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"os"
 	"strings"
 
@@ -14,7 +16,13 @@ func main() {
 	fmt.Println("Welcome to COVIDB! Choose an option from the menu")
 	var choice int
 	exit := false
-	people := models.People{}
+	filePath := "covidb.json"
+
+	people, err := loadPeopleInformation(filePath)
+	if err != nil {
+		fmt.Printf("Error occurred while loading information from file: %s", err.Error())
+		os.Exit(1)
+	}
 
 	for !exit {
 		fmt.Println("\n\nMenu")
@@ -34,7 +42,14 @@ func main() {
 			fmt.Println("Listing the information about all the people")
 			listOutInformationAboutPeople(people)
 		case 3:
+			err := savePeopleInformation(people, filePath)
+			if err != nil {
+				fmt.Printf("An error occurred while saving people information: %s\n", err.Error())
+				break
+			}
+
 			exit = true
+			fmt.Printf("Successfully saved all the information to %s. Exiting...\n", filePath)
 		default:
 			fmt.Printf("Unknown option %d\n", choice)
 		}
@@ -168,4 +183,42 @@ func readLine() string {
 	input, _ := reader.ReadString('\n')
 	input = strings.Replace(input, "\n", "", -1)
 	return input
+}
+
+func savePeopleInformation(people models.People, filePath string) error {
+	data, err := json.Marshal(people)
+	if err != nil {
+		return err
+	}
+
+	err = ioutil.WriteFile(filePath, data, 0644)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func loadPeopleInformation(filePath string) (models.People, error) {
+	_, err := os.Stat(filePath)
+	if os.IsNotExist(err) {
+		return models.People{}, nil
+	}
+
+	if err != nil {
+		return nil, err
+	}
+
+	data, err := ioutil.ReadFile(filePath)
+	if err != nil {
+		return nil, err
+	}
+
+	var people models.People
+	err = json.Unmarshal(data, &people)
+	if err != nil {
+		return nil, err
+	}
+
+	return people, nil
 }
