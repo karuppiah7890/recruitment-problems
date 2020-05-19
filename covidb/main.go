@@ -1,7 +1,10 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
+	"os"
+	"strings"
 
 	"github.com/google/uuid"
 	"github.com/karuppiah7890/recruitment-problems/covidb/pkg/models"
@@ -65,9 +68,8 @@ func getInformationAboutPerson(people models.People) models.Person {
 }
 
 func getGender() string {
-	var gender string
 	fmt.Print("Gender: ")
-	fmt.Scanf("%s", &gender)
+	gender := readLine()
 	return gender
 }
 
@@ -79,16 +81,14 @@ func getAge() int {
 }
 
 func getArea() string {
-	var area string
 	fmt.Print("Area: ")
-	fmt.Scanf("%s", &area)
+	area := readLine()
 	return area
 }
 
 func getCity() string {
-	var city string
 	fmt.Print("City: ")
-	fmt.Scanf("%s", &city)
+	city := readLine()
 	return city
 }
 
@@ -141,13 +141,11 @@ func (invalidUUID InvalidUUID) Error() string {
 }
 
 func getRelationship() (models.Relationship, error) {
-	var relationshipName string
 	fmt.Print("Name of the relationship: ")
-	fmt.Scanf("%s", &relationshipName)
+	relationshipName := readLine()
 
-	var personID string
 	fmt.Print("ID of the person: ")
-	fmt.Scanf("%s", &personID)
+	personID := readLine()
 
 	personUUID, err := uuid.Parse(personID)
 	if err != nil {
@@ -163,4 +161,11 @@ func getRelationship() (models.Relationship, error) {
 	}
 
 	return relationship, nil
+}
+
+func readLine() string {
+	reader := bufio.NewReader(os.Stdin)
+	input, _ := reader.ReadString('\n')
+	input = strings.Replace(input, "\n", "", -1)
+	return input
 }
